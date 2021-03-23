@@ -4,8 +4,8 @@ import model.User;
 
 public class UserSessionImpl implements UserSession{
 
-    private static User user = null;
-    private static boolean active = false;
+    private User user = null;
+    private  boolean active = false;
 
     @Override
     public User getLoggedInUser() {
@@ -15,7 +15,7 @@ public class UserSessionImpl implements UserSession{
     @Override
     public void startSession(User user) {
         active = true;
-        UserSessionImpl.user = user;
+        this.user = user;
     }
 
     @Override

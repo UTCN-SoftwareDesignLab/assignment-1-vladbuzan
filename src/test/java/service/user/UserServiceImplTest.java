@@ -11,6 +11,7 @@ import org.junit.Test;
 import repository.security.PasswordEncrypter;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class UserServiceImplTest {
 
@@ -76,6 +77,24 @@ public class UserServiceImplTest {
         Notification<User> userNotification = userService.getUser("andrei@gamil.com");
         Assert.assertFalse(userNotification.hasErrors());
         Assert.assertEquals("andrei@gamil.com", userNotification.getResult().getUsername());
+    }
+
+    @Test
+    public void getAll(){
+        Notification<List<User>> notification = userService.getAll();
+        Assert.assertFalse(notification.hasErrors());
+        Assert.assertTrue(notification.getResult().size()>0);
+    }
+
+    @Test
+    public void removeUser() {
+        User user = new User();
+        user.setUsername("andrei22@gamil.com");
+        user.setPassword("DDDAA11122ss!");
+        Notification<Boolean> registerNotification = userService.addUser(user);
+        Assert.assertFalse(registerNotification.hasErrors());
+        Notification<Boolean> notification = userService.removeUser(user.getUsername());
+        Assert.assertFalse(notification.hasErrors());
     }
 
 

@@ -151,5 +151,20 @@ public class ComponentFactory {
         return instance;
     }
 
+    public UserController getUserController() {
+        return userController;
+    }
+
+    public UserView getUserView() {
+        return userView;
+    }
+
+    public TransferController getTransferController() {
+        return transferController;
+    }
+
+    public TransferView getTransferView() {
+        return transferView;
+    }
 
 }

@@ -5,6 +5,7 @@ import database.Constants;
 import database.JDBConnectionWrapper;
 import model.User;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -15,6 +16,12 @@ import java.util.List;
 public class UserRepositoryMySQLTest {
     private static Connection connection;
     private static UserRepository userRepository;
+    private static final String USERNAME = "vladBuzan@gmail.com";
+    private static final String NEW_USERNAME = "vlad_Buzan@yahoo.com";
+    private static final String PASSWORD = "vladBuzan!!1122";
+    private static final String NEW_PASSWORD = "newPassword!!111";
+    private static final String ROLE = "admin";
+    private static final String NEW_ROLE = "user";
 
     @BeforeClass
     public static void setUpClass() throws SQLException {
@@ -24,22 +31,27 @@ public class UserRepositoryMySQLTest {
         b.execute(true);
     }
 
+    @Before
+    public void before() throws SQLException {
+        userRepository.removeAll();
+    }
+
     @Test
     public void testAddUser() throws SQLException {
-        userRepository.addUser("Vlad", "somePassword", "admin");
-        User user = userRepository.getUserByUsername("Vlad");
+        userRepository.addUser(USERNAME, PASSWORD, ROLE);
+        User user = userRepository.getUserByUsername(USERNAME);
         Assert.assertNotNull(user);
-        Assert.assertEquals("Vlad", user.getUsername());
-        Assert.assertEquals("somePassword", user.getPassword());
+        Assert.assertEquals(USERNAME, user.getUsername());
+        Assert.assertEquals(PASSWORD, user.getPassword());
     }
 
     @Test
     public void testRemoveUser() throws SQLException {
-        userRepository.addUser("Andrei", "ParolaMea", "admin");
-        User user = userRepository.getUserByUsername("Andrei");
+        userRepository.addUser(USERNAME, PASSWORD, ROLE);
+        User user = userRepository.getUserByUsername(USERNAME);
         Assert.assertNotNull(user);
-        userRepository.removeUser("Andrei");
-        Assert.assertNull(userRepository.getUserByUsername("Andrei"));
+        userRepository.removeUser(USERNAME);
+        Assert.assertNull(userRepository.getUserByUsername(USERNAME));
     }
 
     @Test
@@ -50,52 +62,51 @@ public class UserRepositoryMySQLTest {
 
     @Test
     public void testUpdateUsername() throws SQLException {
-        userRepository.addUser("Daniel", "oParolaInteresanta", "admin");
-        userRepository.updateUsername("Daniel", "DanielNou");
-        Assert.assertNull(userRepository.getUserByUsername("Daniel"));
-        User user = userRepository.getUserByUsername("DanielNou");
+        userRepository.addUser(USERNAME, PASSWORD, ROLE);
+        userRepository.updateUsername(USERNAME, NEW_USERNAME);
+        Assert.assertNull(userRepository.getUserByUsername(USERNAME));
+        User user = userRepository.getUserByUsername(NEW_USERNAME);
         Assert.assertNotNull(user);
-        Assert.assertEquals("DanielNou", user.getUsername());
+        Assert.assertEquals(NEW_USERNAME, user.getUsername());
     }
 
     @Test
     public void testUpdatePassword() throws SQLException {
-        userRepository.addUser("Marian", "MarianParola", "user");
-        userRepository.updatePassword("Marian", "MarianParola2");
-        User user = userRepository.getUserByUsername("Marian");
-        Assert.assertEquals("MarianParola2", user.getPassword());
+        userRepository.addUser(USERNAME, PASSWORD, ROLE);
+        userRepository.updatePassword(USERNAME, NEW_PASSWORD);
+        User user = userRepository.getUserByUsername(USERNAME);
+        Assert.assertEquals(NEW_PASSWORD, user.getPassword());
     }
 
     @Test
     public void testUpdateRole() throws SQLException {
-        userRepository.addUser("VladBuz", "Parola", "user");
-        userRepository.updateRole("VladBuz", "admin");
-        User user = userRepository.getUserByUsername("VladBuz");
-        Assert.assertEquals("admin", user.getRole().getRole());
+        userRepository.addUser(USERNAME, PASSWORD, ROLE);
+        userRepository.updateRole(USERNAME, NEW_ROLE);
+        User user = userRepository.getUserByUsername(USERNAME);
+        Assert.assertEquals(NEW_ROLE, user.getRole().getRole());
     }
 
     @Test
     public void testGetUserById() throws SQLException {
-        userRepository.addUser("Adrian", "Peculea", "admin");
-        User user = userRepository.getUserByUsername("Adrian");
+        userRepository.addUser(USERNAME, PASSWORD, ROLE);
+        User user = userRepository.getUserByUsername(USERNAME);
         User user2 = userRepository.getUserById(user.getId());
         Assert.assertEquals(user.getId(), user2.getId());
     }
 
     @Test
     public void testGetUserByUsername() throws SQLException {
-        userRepository.addUser("Marcel", "parolaMarcel", "admin");
-        User user = userRepository.getUserByUsername("Marcel");
-        Assert.assertEquals("Marcel", user.getUsername());
+        userRepository.addUser(USERNAME, PASSWORD, ROLE);
+        User user = userRepository.getUserByUsername(USERNAME);
+        Assert.assertEquals(USERNAME, user.getUsername());
     }
 
     @Test
     public void testGetUsersByRole() throws SQLException {
-        userRepository.removeAll();
-        userRepository.addUser("Donnie", "ParolaluiDonnie", "admin");
-        userRepository.addUser("Nicusor", "parolaluiNicusor", "user");
-        userRepository.addUser("Nicusor2", "parolaluiNicusor", "user");
-        List<User> users = userRepository.getUsersByRole("user");
+        userRepository.addUser(USERNAME, PASSWORD, ROLE);
+        userRepository.addUser(USERNAME + "2", PASSWORD, ROLE);
+        userRepository.addUser(USERNAME + "3", PASSWORD, NEW_ROLE);
+        List<User> users = userRepository.getUsersByRole(ROLE);
         Assert.assertEquals(2, users.size());
     }
 }

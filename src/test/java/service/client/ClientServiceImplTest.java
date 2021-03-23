@@ -4,8 +4,10 @@ import database.Bootstrapper;
 import database.DBConnectionFactory;
 import launcher.ComponentFactory;
 import model.Client;
+import model.ClientAccount;
 import model.generators.UniqueLongGenerator;
 import model.validation.Notification;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -81,6 +83,73 @@ public class ClientServiceImplTest  {
         client = factory.getClientRepository().getClientByICN(icn);
         client.setName("nou");
         Notification<Boolean> notification = clientService.updateClient(client.getId(), client);
+        Assert.assertFalse(notification.hasErrors());
+    }
+
+    @Test
+    public void updateClientAccount() throws SQLException{
+        Long icn = UniqueLongGenerator.generateUniqueLong();
+        Client client = new Client();
+        client.setName("Vlad Buzan");
+        client.setIdentityCardNumber(icn);
+        client.setAddress("Dr ioan ratiu nr 87");
+        client.setPersonalNumericalCode("12321BBgggg");
+        ClientAccount account = new ClientAccount();
+        account.setAmount(200.0);
+        account.setType("regular");
+        account.setDateOfCreation(DateTime.now());
+        account.setIdentificationNumber(123123L);
+        client.setAccount(account);
+        clientService.addClient(client);
+        client = factory.getClientRepository().getClientByICN(icn);
+        account.setType("premium");
+        Notification<Boolean> notification = clientService.updateClientAccount(client.getId(), account);
+        Assert.assertFalse(notification.hasErrors());
+    }
+
+    @Test
+    public void removeClient() throws SQLException {
+        Long icn = UniqueLongGenerator.generateUniqueLong();
+        Client client = new Client();
+        client.setName("Vlad Buzan");
+        client.setIdentityCardNumber(icn);
+        client.setAddress("Dr ioan ratiu nr 87");
+        client.setPersonalNumericalCode("12321BBgggg");
+        clientService.addClient(client);
+        client = factory.getClientRepository().getClientByICN(icn);
+        Notification<Boolean> notification = clientService.removeClient(client.getId());
+        Assert.assertFalse(notification.hasErrors());
+    }
+
+    @Test
+    public void transfer() throws SQLException {
+        Long icn = UniqueLongGenerator.generateUniqueLong();
+        Client client = new Client();
+        client.setName("Vlad Buzan");
+        client.setIdentityCardNumber(icn);
+        client.setAddress("Dr ioan ratiu nr 87");
+        client.setPersonalNumericalCode("12321BBgggg");
+        ClientAccount account = new ClientAccount();
+        account.setAmount(200.0);
+        account.setType("regular");
+        account.setDateOfCreation(DateTime.now());
+        account.setIdentificationNumber(123123L);
+        client.setAccount(account);
+        clientService.addClient(client);
+        client = factory.getClientRepository().getClientByICN(icn);
+        icn = UniqueLongGenerator.generateUniqueLong();
+        Client client2 = new Client();
+        client2.setName("Vlad Buzan");
+        client2.setIdentityCardNumber(icn);
+        client2.setAddress("Dr ioan ratiu nr 87");
+        client2.setPersonalNumericalCode("12321BBgggg");
+        client2.setIdentityCardNumber(icn);
+        account.setAmount(100);
+        account.setIdentificationNumber(123432L);
+        client2.setAccount(account);
+        clientService.addClient(client2);
+        client2 = factory.getClientRepository().getClientByICN(icn);
+        Notification<Boolean> notification = clientService.transfer(client.getId(), client2.getId(), 100.0);
         Assert.assertFalse(notification.hasErrors());
     }
 
