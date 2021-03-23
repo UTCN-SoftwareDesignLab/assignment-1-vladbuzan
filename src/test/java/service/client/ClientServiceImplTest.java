@@ -123,12 +123,15 @@ public class ClientServiceImplTest  {
 
     @Test
     public void transfer() throws SQLException {
+        Connection connection = new DBConnectionFactory().getConnectionWrapper(true).getConnection();
+        Bootstrapper b = new Bootstrapper(connection);
+        b.execute(true);
         Long icn = UniqueLongGenerator.generateUniqueLong();
         Client client = new Client();
         client.setName("Vlad Buzan");
         client.setIdentityCardNumber(icn);
         client.setAddress("Dr ioan ratiu nr 87");
-        client.setPersonalNumericalCode("12321BBgggg");
+        client.setPersonalNumericalCode("12321BBgggga");
         ClientAccount account = new ClientAccount();
         account.setAmount(200.0);
         account.setType("regular");
@@ -142,9 +145,9 @@ public class ClientServiceImplTest  {
         client2.setName("Vlad Buzan");
         client2.setIdentityCardNumber(icn);
         client2.setAddress("Dr ioan ratiu nr 87");
-        client2.setPersonalNumericalCode("12321BBgggg");
+        client2.setPersonalNumericalCode("12ffffBBgggg");
         client2.setIdentityCardNumber(icn);
-        account.setAmount(100);
+        account.setAmount(100.0);
         account.setIdentificationNumber(123432L);
         client2.setAccount(account);
         clientService.addClient(client2);
